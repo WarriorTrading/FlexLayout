@@ -1,9 +1,7 @@
 node_modules/
-declarations/
 bundles/
 .idea/
 dist/
-lib/
 out/
 todo.txt
 .DS_Store
