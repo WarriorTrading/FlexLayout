@@ -36,23 +36,23 @@ export class BorderButton extends React.Component<IBorderButtonProps, any> {
       this.onClick,
       (event2: Event) => undefined
     );
-  };
+  }
 
   onClick = () => {
     const node = this.props.node;
     this.props.layout.doAction(Actions.selectTab(node.getId()));
-  };
+  }
 
   onClose = (event: React.MouseEvent<HTMLDivElement>) => {
     const node = this.props.node;
     this.props.layout.doAction(Actions.deleteTab(node.getId()));
-  };
+  }
 
   onCloseMouseDown = (
     event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
   ) => {
     event.stopPropagation();
-  };
+  }
 
   componentDidMount() {
     this.updateRect();
@@ -81,15 +81,17 @@ export class BorderButton extends React.Component<IBorderButtonProps, any> {
   render() {
     const cm = this.props.layout.getClassName;
     let classNames =
-      cm("flexlayout__border_button") +
+      cm("flexlayout__border_button", this.props.node) +
       " " +
-      cm("flexlayout__border_button_" + this.props.border);
+      cm("flexlayout__border_button_" + this.props.border, this.props.node);
     const node = this.props.node;
 
     if (this.props.selected) {
-      classNames += " " + cm("flexlayout__border_button--selected");
+      classNames +=
+        " " + cm("flexlayout__border_button--selected", this.props.node);
     } else {
-      classNames += " " + cm("flexlayout__border_button--unselected");
+      classNames +=
+        " " + cm("flexlayout__border_button--unselected", this.props.node);
     }
 
     if (this.props.node.getClassName() !== undefined) {
@@ -109,13 +111,13 @@ export class BorderButton extends React.Component<IBorderButtonProps, any> {
     const content = (
       <div
         ref={ref => (this.contentsRef = ref === null ? undefined : ref)}
-        className={cm("flexlayout__border_button_content")}
+        className={cm("flexlayout__border_button_content", this.props.node)}
       >
         {renderState.content}
       </div>
     );
     const leading = (
-      <div className={cm("flexlayout__border_button_leading")}>
+      <div className={cm("flexlayout__border_button_leading", this.props.node)}>
         {renderState.leading}
       </div>
     );
@@ -124,7 +126,7 @@ export class BorderButton extends React.Component<IBorderButtonProps, any> {
     if (this.props.node.isEnableClose()) {
       closeButton = (
         <div
-          className={cm("flexlayout__border_button_trailing")}
+          className={cm("flexlayout__border_button_trailing", this.props.node)}
           onMouseDown={this.onCloseMouseDown}
           onClick={this.onClose}
           onTouchStart={this.onCloseMouseDown}

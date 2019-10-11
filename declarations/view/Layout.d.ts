@@ -3,6 +3,7 @@ import { I18nLabel } from "../I18nLabel";
 import Action from "../model/Action";
 import BorderNode from "../model/BorderNode";
 import Model from "../model/Model";
+import Node from "../model/Node";
 import TabNode from "../model/TabNode";
 import TabSetNode from "../model/TabSetNode";
 export interface ILayoutProps {
@@ -18,7 +19,7 @@ export interface ILayoutProps {
         buttons: React.ReactNode[];
     }) => void;
     onModelChange?: (model: Model) => void;
-    classNameMapper?: (defaultClassName: string) => string;
+    classNameMapper?: (node: Node | null, defaultClassName: string) => string;
     i18nMapper?: (id: I18nLabel, param?: string) => string | undefined;
 }
 /**

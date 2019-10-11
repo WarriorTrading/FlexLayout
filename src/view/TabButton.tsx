@@ -46,12 +46,12 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
       this.onClick,
       this.onDoubleClick
     );
-  };
+  }
 
   onClick = (event: Event) => {
     const node = this.props.node;
     this.props.layout.doAction(Actions.selectTab(node.getId()));
-  };
+  }
 
   onDoubleClick = (event: Event) => {
     if (this.props.node.isEnableRename()) {
@@ -64,7 +64,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
         this.props.layout.maximize(parentNode);
       }
     }
-  };
+  }
 
   onEndEdit = (event: Event) => {
     if (event.target !== this.contentRef) {
@@ -72,18 +72,18 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
       document.body.removeEventListener("mousedown", this.onEndEdit);
       document.body.removeEventListener("touchstart", this.onEndEdit);
     }
-  };
+  }
 
   onClose = (event: React.MouseEvent<HTMLDivElement>) => {
     const node = this.props.node;
     this.props.layout.doAction(Actions.deleteTab(node.getId()));
-  };
+  }
 
   onCloseMouseDown = (
     event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
   ) => {
     event.stopPropagation();
-  };
+  }
 
   componentDidMount() {
     this.updateRect();
@@ -121,7 +121,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
   ) => {
     // console.log("onTextBoxMouseDown");
     event.stopPropagation();
-  };
+  }
 
   onTextBoxKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // console.log(event, event.keyCode);
@@ -139,7 +139,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
         )
       );
     }
-  };
+  }
 
   doRename(node: TabNode, newName: string) {
     this.props.layout.doAction(Actions.renameTab(node.getId(), newName));
@@ -148,13 +148,15 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
   render() {
     const cm = this.props.layout.getClassName;
 
-    let classNames = cm("flexlayout__tab_button");
+    let classNames = cm("flexlayout__tab_button", this.props.node);
     const node = this.props.node;
 
     if (this.props.selected) {
-      classNames += " " + cm("flexlayout__tab_button--selected");
+      classNames +=
+        " " + cm("flexlayout__tab_button--selected", this.props.node);
     } else {
-      classNames += " " + cm("flexlayout__tab_button--unselected");
+      classNames +=
+        " " + cm("flexlayout__tab_button--unselected", this.props.node);
     }
 
     if (this.props.node.getClassName() !== undefined) {
@@ -174,13 +176,13 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
     let content = (
       <div
         ref={ref => (this.contentRef = ref === null ? undefined : ref)}
-        className={cm("flexlayout__tab_button_content")}
+        className={cm("flexlayout__tab_button_content", this.props.node)}
       >
         {renderState.content}
       </div>
     );
     const leading = (
-      <div className={cm("flexlayout__tab_button_leading")}>
+      <div className={cm("flexlayout__tab_button_leading", this.props.node)}>
         {renderState.leading}
       </div>
     );
@@ -191,7 +193,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
         <input
           style={contentStyle}
           ref={ref => (this.contentRef = ref === null ? undefined : ref)}
-          className={cm("flexlayout__tab_button_textbox")}
+          className={cm("flexlayout__tab_button_textbox", this.props.node)}
           type="text"
           autoFocus={true}
           defaultValue={node.getName()}
@@ -206,7 +208,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
     if (this.props.node.isEnableClose()) {
       closeButton = (
         <div
-          className={cm("flexlayout__tab_button_trailing")}
+          className={cm("flexlayout__tab_button_trailing", this.props.node)}
           onMouseDown={this.onCloseMouseDown}
           onClick={this.onClose}
           onTouchStart={this.onCloseMouseDown}

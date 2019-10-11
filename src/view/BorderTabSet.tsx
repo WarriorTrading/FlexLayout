@@ -52,7 +52,8 @@ export class BorderTabSet extends React.Component<IBorderTabSetProps, any> {
     }
 
     let borderClasses = cm(
-      "flexlayout__border_" + border.getLocation().getName()
+      "flexlayout__border_" + border.getLocation().getName(),
+      null
     );
     if (this.props.border.getClassName() !== undefined) {
       borderClasses += " " + this.props.border.getClassName();
@@ -71,7 +72,8 @@ export class BorderTabSet extends React.Component<IBorderTabSetProps, any> {
           (this.toolbarRef = toolbar2 === null ? undefined : toolbar2)
         }
         className={cm(
-          "flexlayout__border_toolbar_" + border.getLocation().getName()
+          "flexlayout__border_toolbar_" + border.getLocation().getName(),
+          null
         )}
       >
         {buttons}
@@ -82,7 +84,8 @@ export class BorderTabSet extends React.Component<IBorderTabSetProps, any> {
       <div style={style} className={borderClasses}>
         <div
           className={cm(
-            "flexlayout__border_inner_" + border.getLocation().getName()
+            "flexlayout__border_inner_" + border.getLocation().getName(),
+            null
           )}
         >
           {tabs}

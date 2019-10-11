@@ -67,7 +67,7 @@ class PopupMenu extends React.Component<IPopupMenuProps, any> {
     setTimeout(() => {
       this.hide();
     }, 0);
-  };
+  }
 
   hide() {
     if (!this.hidden) {

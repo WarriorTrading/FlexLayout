@@ -37,7 +37,7 @@ export interface ILayoutProps {
     }
   ) => void;
   onModelChange?: (model: Model) => void;
-  classNameMapper?: (defaultClassName: string) => string;
+  classNameMapper?: (node: Node | null, defaultClassName: string) => string;
   i18nMapper?: (id: I18nLabel, param?: string) => string | undefined;
 }
 
@@ -45,7 +45,6 @@ export interface ILayoutProps {
  * A React component that hosts a multi-tabbed layout
  */
 export class Layout extends React.Component<ILayoutProps, any> {
-
   /** @hidden @internal */
   selfRef?: HTMLDivElement;
 
@@ -156,11 +155,11 @@ export class Layout extends React.Component<ILayoutProps, any> {
   }
 
   /** @hidden @internal */
-  getClassName = (defaultClassName: string) => {
+  getClassName = (defaultClassName: string, node: Node | null) => {
     if (this.props.classNameMapper === undefined) {
       return defaultClassName;
     } else {
-      return this.props.classNameMapper(defaultClassName);
+      return this.props.classNameMapper(node, defaultClassName);
     }
   }
 
@@ -216,7 +215,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
     return (
       <div
         ref={self => (this.selfRef = self === null ? undefined : self)}
-        className={this.getClassName("flexlayout__layout")}
+        className={this.getClassName("flexlayout__layout", null)}
       >
         {tabSetComponents}
         {this.tabIds.map(t => {
@@ -278,7 +277,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
     const drawChildren = node._getDrawChildren();
 
     for (const child of drawChildren!) {
-        if (child instanceof SplitterNode) {
+      if (child instanceof SplitterNode) {
         splitterComponents.push(
           <Splitter key={child.getId()} layout={this} node={child} />
         );
@@ -298,6 +297,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
         ];
         if (selectedTab === undefined) {
           // this should not happen!
+          // tslint:disable-next-line: no-console
           console.warn("undefined selectedTab should not happen");
         }
         tabComponents[child.getId()] = (
@@ -385,16 +385,10 @@ export class Layout extends React.Component<ILayoutProps, any> {
 
     this.dragDivText = dragText;
     this.dragDiv = document.createElement("div");
-    this.dragDiv.className = this.getClassName("flexlayout__drag_rect");
+    this.dragDiv.className = this.getClassName("flexlayout__drag_rect", null);
     this.dragDiv.innerHTML = this.dragDivText;
-    this.dragDiv.addEventListener(
-      "mousedown",
-      this.onDragDivMouseDown
-    );
-    this.dragDiv.addEventListener(
-      "touchstart",
-      this.onDragDivMouseDown
-    );
+    this.dragDiv.addEventListener("mousedown", this.onDragDivMouseDown);
+    this.dragDiv.addEventListener("touchstart", this.onDragDivMouseDown);
 
     const r = new Rect(10, 10, 150, 50);
     r.centerInRect(this.rect);
@@ -425,11 +419,11 @@ export class Layout extends React.Component<ILayoutProps, any> {
 
       try {
         rootdiv.removeChild(this.outlineDiv!);
-      } catch (e) { }
+      } catch (e) {}
 
       try {
         rootdiv.removeChild(this.dragDiv!);
-      } catch (e) { }
+      } catch (e) {}
 
       this.dragDiv = undefined;
       this.hideEdges(rootdiv);
@@ -457,7 +451,11 @@ export class Layout extends React.Component<ILayoutProps, any> {
 
   /** @hidden @internal */
   dragStart = (
-    event: Event | React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement> | undefined,
+    event:
+      | Event
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.TouchEvent<HTMLDivElement>
+      | undefined,
     dragDivText: string,
     node: Node & IDraggable,
     allowDrag: boolean,
@@ -494,12 +492,15 @@ export class Layout extends React.Component<ILayoutProps, any> {
     this.dropInfo = undefined;
     const rootdiv = ReactDOM.findDOMNode(this) as HTMLElement;
     this.outlineDiv = document.createElement("div");
-    this.outlineDiv.className = this.getClassName("flexlayout__outline_rect");
+    this.outlineDiv.className = this.getClassName(
+      "flexlayout__outline_rect",
+      null
+    );
     rootdiv.appendChild(this.outlineDiv);
 
     if (this.dragDiv == null) {
       this.dragDiv = document.createElement("div");
-      this.dragDiv.className = this.getClassName("flexlayout__drag_rect");
+      this.dragDiv.className = this.getClassName("flexlayout__drag_rect", null);
       this.dragDiv.innerHTML = this.dragDivText;
       rootdiv.appendChild(this.dragDiv);
     }
@@ -542,7 +543,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
     );
     if (dropInfo) {
       this.dropInfo = dropInfo;
-      this.outlineDiv!.className = this.getClassName(dropInfo.className);
+      this.outlineDiv!.className = this.getClassName(dropInfo.className, null);
       dropInfo.rect.positionElement(this.outlineDiv!);
     }
   }
@@ -596,7 +597,10 @@ export class Layout extends React.Component<ILayoutProps, any> {
       const width = "10px";
 
       this.edgeTopDiv = document.createElement("div");
-      this.edgeTopDiv.className = this.getClassName("flexlayout__edge_rect");
+      this.edgeTopDiv.className = this.getClassName(
+        "flexlayout__edge_rect",
+        null
+      );
       this.edgeTopDiv.style.top = r.y + "px";
       this.edgeTopDiv.style.left = r.x + (r.width - size) / 2 + "px";
       this.edgeTopDiv.style.width = length;
@@ -605,7 +609,10 @@ export class Layout extends React.Component<ILayoutProps, any> {
       this.edgeTopDiv.style.borderBottomRightRadius = radius;
 
       this.edgeLeftDiv = document.createElement("div");
-      this.edgeLeftDiv.className = this.getClassName("flexlayout__edge_rect");
+      this.edgeLeftDiv.className = this.getClassName(
+        "flexlayout__edge_rect",
+        null
+      );
       this.edgeLeftDiv.style.top = r.y + (r.height - size) / 2 + "px";
       this.edgeLeftDiv.style.left = r.x + "px";
       this.edgeLeftDiv.style.width = width;
@@ -614,7 +621,10 @@ export class Layout extends React.Component<ILayoutProps, any> {
       this.edgeLeftDiv.style.borderBottomRightRadius = radius;
 
       this.edgeBottomDiv = document.createElement("div");
-      this.edgeBottomDiv.className = this.getClassName("flexlayout__edge_rect");
+      this.edgeBottomDiv.className = this.getClassName(
+        "flexlayout__edge_rect",
+        null
+      );
       this.edgeBottomDiv.style.bottom = domRect.height - r.getBottom() + "px";
       this.edgeBottomDiv.style.left = r.x + (r.width - size) / 2 + "px";
       this.edgeBottomDiv.style.width = length;
@@ -623,7 +633,10 @@ export class Layout extends React.Component<ILayoutProps, any> {
       this.edgeBottomDiv.style.borderTopRightRadius = radius;
 
       this.edgeRightDiv = document.createElement("div");
-      this.edgeRightDiv.className = this.getClassName("flexlayout__edge_rect");
+      this.edgeRightDiv.className = this.getClassName(
+        "flexlayout__edge_rect",
+        null
+      );
       this.edgeRightDiv.style.top = r.y + (r.height - size) / 2 + "px";
       this.edgeRightDiv.style.right = domRect.width - r.getRight() + "px";
       this.edgeRightDiv.style.width = width;
@@ -646,7 +659,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
         rootdiv.removeChild(this.edgeLeftDiv!);
         rootdiv.removeChild(this.edgeBottomDiv!);
         rootdiv.removeChild(this.edgeRightDiv!);
-      } catch (e) { }
+      } catch (e) {}
     }
   }
 
@@ -679,7 +692,7 @@ export class Layout extends React.Component<ILayoutProps, any> {
   }
 
   i18nName(id: I18nLabel, param?: string) {
-    let message = undefined;
+    let message;
     if (this.props.i18nMapper) {
       message = this.props.i18nMapper(id, param);
     }

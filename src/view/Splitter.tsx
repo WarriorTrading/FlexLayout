@@ -39,7 +39,8 @@ export class Splitter extends React.Component<ISplitterProps, any> {
     this.outlineDiv = document.createElement("div");
     this.outlineDiv.style.position = "absolute";
     this.outlineDiv.className = this.props.layout.getClassName(
-      "flexlayout__splitter_drag"
+      "flexlayout__splitter_drag",
+      this.props.node
     );
     this.outlineDiv.style.cursor =
       this.props.node.getOrientation() === Orientation.HORZ
@@ -47,16 +48,16 @@ export class Splitter extends React.Component<ISplitterProps, any> {
         : "ew-resize";
     this.props.node.getRect().positionElement(this.outlineDiv);
     rootdiv.appendChild(this.outlineDiv);
-  };
+  }
 
   onDragCancel = (wasDragging: boolean) => {
     const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element;
     rootdiv.removeChild(this.outlineDiv as Element);
-  };
+  }
 
   onDragStart = () => {
     return true;
-  };
+  }
 
   onDragMove = (event: React.MouseEvent<Element, MouseEvent>) => {
     const clientRect = (ReactDOM.findDOMNode(
@@ -74,7 +75,7 @@ export class Splitter extends React.Component<ISplitterProps, any> {
     } else {
       outlineDiv.style.left = this.getBoundPosition(pos.x - 4) + "px";
     }
-  };
+  }
 
   onDragEnd = () => {
     const node = this.props.node;
@@ -101,7 +102,7 @@ export class Splitter extends React.Component<ISplitterProps, any> {
 
     const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element;
     rootdiv.removeChild(this.outlineDiv as HTMLDivElement);
-  };
+  }
 
   getBoundPosition(p: number) {
     const bounds = this.pBounds as number[];
@@ -132,7 +133,7 @@ export class Splitter extends React.Component<ISplitterProps, any> {
         style={style}
         onTouchStart={this.onMouseDown}
         onMouseDown={this.onMouseDown}
-        className={cm("flexlayout__splitter")}
+        className={cm("flexlayout__splitter", this.props.node)}
       />
     );
   }

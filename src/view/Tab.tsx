@@ -45,7 +45,7 @@ export class Tab extends React.Component<ITabProps, any> {
         this.props.layout.doAction(Actions.setActiveTabset(parent.getId()));
       }
     }
-  };
+  }
 
   render() {
     const cm = this.props.layout.getClassName;
@@ -67,7 +67,7 @@ export class Tab extends React.Component<ITabProps, any> {
 
     return (
       <div
-        className={cm("flexlayout__tab")}
+        className={cm("flexlayout__tab", this.props.node)}
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
         style={style}
