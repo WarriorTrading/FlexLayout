@@ -64,7 +64,7 @@ export class TabSet extends React.Component<ITabSetProps, any> {
           this.showOverflow = node.getChildren().length > 1;
 
           if (i === 0) {
-            this.showToolbar = false;
+            // this.showToolbar = false;
             if (
               child.getTabRect()!.getRight() >
               node.getRect().getRight() - 20
