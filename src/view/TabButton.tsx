@@ -173,36 +173,11 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
     const renderState = { leading: leadingContent, content: node.getName() };
     this.props.layout.customizeTab(node, renderState);
 
-    let content = (
-      <div
-        ref={ref => (this.contentRef = ref === null ? undefined : ref)}
-        className={cm("flexlayout__tab_button_content", this.props.node)}
-      >
-        {renderState.content}
-      </div>
-    );
     const leading = (
       <div className={cm("flexlayout__tab_button_leading", this.props.node)}>
         {renderState.leading}
       </div>
     );
-
-    if (this.state.editing) {
-      const contentStyle = { width: this.contentWidth + "px" };
-      content = (
-        <input
-          style={contentStyle}
-          ref={ref => (this.contentRef = ref === null ? undefined : ref)}
-          className={cm("flexlayout__tab_button_textbox", this.props.node)}
-          type="text"
-          autoFocus={true}
-          defaultValue={node.getName()}
-          onKeyDown={this.onTextBoxKeyPress}
-          onMouseDown={this.onTextBoxMouseDown}
-          onTouchStart={this.onTextBoxMouseDown}
-        />
-      );
-    }
 
     let closeButton;
     if (this.props.node.isEnableClose()) {
@@ -228,11 +203,75 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
         onTouchStart={this.onMouseDown}
       >
         {leading}
-        {content}
+        <Content
+          editing={this.state.editing}
+          cm={cm}
+          onTextBoxKeyPress={this.onTextBoxKeyPress}
+          onTextBoxMouseDown={this.onTextBoxMouseDown}
+          renderState={renderState}
+          node={this.props.node}
+        />
         {closeButton}
       </div>
     );
   }
 }
 
-// export default TabButton;
+// tslint:disable-next-line: variable-name
+const Content = React.forwardRef<
+  HTMLInputElement | HTMLDivElement | null,
+  {
+    editing: boolean;
+    cm: any;
+    onTextBoxKeyPress: any;
+    onTextBoxMouseDown: any;
+    renderState: {
+      leading: JSX.Element | undefined;
+      content: string;
+    };
+    node: any;
+  }
+>((props, ref) => {
+  const {
+    editing,
+    cm,
+    node,
+    onTextBoxKeyPress,
+    onTextBoxMouseDown,
+    renderState
+  } = props;
+
+  const contentRef = React.useRef<HTMLInputElement | null>(null);
+  React.useImperativeHandle(ref, () => contentRef.current);
+  const contentStyle = React.useMemo(() => {
+    if (contentRef.current == null || !editing) {
+      return {
+        width: 0
+      };
+    }
+    return {
+      width: contentRef.current.getBoundingClientRect().width
+    };
+  }, [editing, contentRef]);
+  return (
+    <React.Fragment>
+      {editing ? (
+        <input
+          style={contentStyle}
+          ref={contentRef}
+          className={cm("flexlayout__tab_button_textbox")}
+          type="text"
+          autoFocus={true}
+          defaultValue={node.getName()}
+          onKeyDown={onTextBoxKeyPress}
+          onMouseDown={onTextBoxMouseDown}
+          onTouchStart={onTextBoxMouseDown}
+        />
+      ) : (
+        <div ref={contentRef} className={cm("flexlayout__tab_button_content")}>
+          {renderState.content}
+        </div>
+      )}
+    </React.Fragment>
+  );
+});
