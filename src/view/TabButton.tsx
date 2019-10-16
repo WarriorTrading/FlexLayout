@@ -173,24 +173,6 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
     const renderState = { leading: leadingContent, content: node.getName() };
     this.props.layout.customizeTab(node, renderState);
 
-    const leading = (
-      <div className={cm("flexlayout__tab_button_leading", this.props.node)}>
-        {renderState.leading}
-      </div>
-    );
-
-    let closeButton;
-    if (this.props.node.isEnableClose()) {
-      closeButton = (
-        <div
-          className={cm("flexlayout__tab_button_trailing", this.props.node)}
-          onMouseDown={this.onCloseMouseDown}
-          onClick={this.onClose}
-          onTouchStart={this.onCloseMouseDown}
-        />
-      );
-    }
-
     return (
       <div
         ref={ref => (this.selfRef = ref === null ? undefined : ref)}
@@ -202,7 +184,7 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
       >
-        {leading}
+        <Leading cm={cm} node={this.props.node} renderState={renderState} />
         <Content
           editing={this.state.editing}
           cm={cm}
@@ -211,11 +193,34 @@ export class TabButton extends React.Component<ITabButtonProps, any> {
           renderState={renderState}
           node={this.props.node}
         />
-        {closeButton}
+        <CloseButton
+          isEnableClose={this.props.node.isEnableClose()}
+          cm={cm}
+          node={this.props.node}
+          onClose={this.onClose}
+          onCloseMouseDown={this.onCloseMouseDown}
+        />
       </div>
     );
   }
 }
+
+// tslint:disable-next-line: variable-name
+const Leading = (props: {
+  cm: any;
+  node: any;
+  renderState: {
+    leading: JSX.Element | undefined;
+    content: string;
+  };
+}) => {
+  const { cm, node, renderState } = props;
+  return (
+    <div className={cm("flexlayout__tab_button_leading", node)}>
+      {renderState.leading}
+    </div>
+  );
+};
 
 // tslint:disable-next-line: variable-name
 const Content = React.forwardRef<
@@ -275,3 +280,22 @@ const Content = React.forwardRef<
     </React.Fragment>
   );
 });
+
+// tslint:disable-next-line: variable-name
+const CloseButton = (props: {
+  isEnableClose: boolean;
+  cm: any;
+  node: any;
+  onCloseMouseDown: any;
+  onClose: any;
+}) => {
+  const { isEnableClose, cm, node, onCloseMouseDown, onClose } = props;
+  return isEnableClose ? (
+    <div
+      className={cm("flexlayout__tab_button_trailing", node)}
+      onMouseDown={onCloseMouseDown}
+      onClick={onClose}
+      onTouchStart={onCloseMouseDown}
+    />
+  ) : null;
+};
