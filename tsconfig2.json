@@ -13,6 +13,7 @@
     "noImplicitReturns": true,
     "strict": true,
     "noUnusedLocals": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react"
   },
   "include": [

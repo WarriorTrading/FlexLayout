@@ -5,6 +5,7 @@ import Actions from "../model/Actions";
 import TabNode from "../model/TabNode";
 import TabSetNode from "../model/TabSetNode";
 import Rect from "../Rect";
+import TitleApis from "../titleApis";
 import Layout from "./Layout";
 
 /** @hidden @internal */
@@ -129,7 +130,6 @@ export const TabButton = (props: ITabButtonProps) => {
 
   const onTextBoxKeyPress = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
-      // console.log(event, event.keyCode);
       if (event.keyCode === 27) {
         // esc
         setEditing(false);
@@ -223,6 +223,8 @@ const Leading = (props: {
   );
 };
 
+
+
 // tslint:disable-next-line: variable-name
 const Content = React.forwardRef<
   HTMLInputElement | HTMLDivElement | null,
@@ -244,9 +246,9 @@ const Content = React.forwardRef<
     node,
     onTextBoxKeyPress,
     onTextBoxMouseDown,
-    renderState
   } = props;
 
+  const nodeId = React.useMemo(() => node.getId(), [node]);
   const contentRef = React.useRef<HTMLInputElement | null>(null);
   React.useImperativeHandle(ref, () => contentRef.current);
   const contentStyle = React.useMemo(() => {
@@ -259,6 +261,23 @@ const Content = React.forwardRef<
       width: contentRef.current.getBoundingClientRect().width
     };
   }, [editing, contentRef]);
+  const [title, setTitle] = React.useState("Hello world");
+
+  React.useEffect(() => {
+    let currentTitle: string = "";
+    const unsubscribe = TitleApis.subscribe(
+      (payload) => {
+        if (nodeId === payload.nodeId && currentTitle !== payload.title) {
+          currentTitle = payload.title;
+          setTitle(currentTitle);
+        }
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    }; 
+  }, [nodeId]);
   return (
     <React.Fragment>
       {editing ? (
@@ -275,7 +294,7 @@ const Content = React.forwardRef<
         />
       ) : (
         <div ref={contentRef} className={cm("flexlayout__tab_button_content")}>
-          {renderState.content}
+          {title}
         </div>
       )}
     </React.Fragment>

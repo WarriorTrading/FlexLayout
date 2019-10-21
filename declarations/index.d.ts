@@ -14,9 +14,25 @@ import TabNode from "./model/TabNode";
 import TabSetNode from "./model/TabSetNode";
 import Orientation from "./Orientation";
 import Rect from "./Rect";
+import TitleApis from "./titleApis";
 import Layout from "./view/Layout";
-export { Layout, I18nLabel, Actions, Action, Model, Node, RowNode, SplitterNode, TabNode, TabSetNode, BorderNode, BorderSet, DockLocation, Orientation, DragDrop, DropInfo, Rect };
+export { TitleApis, Layout, I18nLabel, Actions, Action, Model, Node, RowNode, SplitterNode, TabNode, TabSetNode, BorderNode, BorderSet, DockLocation, Orientation, DragDrop, DropInfo, Rect };
 declare const _default: {
+    TitleApis: {
+        init: () => import("rxjs").Subject<{
+            nodeId: string;
+            title: string;
+        }>;
+        release: () => void;
+        subscribe: (next: (value: {
+            nodeId: string;
+            title: string;
+        }) => void) => () => void;
+        update: (payload: {
+            nodeId: string;
+            title: string;
+        }) => void;
+    };
     Layout: typeof Layout;
     I18nLabel: typeof I18nLabel;
     Actions: typeof Actions;

@@ -14,44 +14,47 @@ import TabNode from "./model/TabNode";
 import TabSetNode from "./model/TabSetNode";
 import Orientation from "./Orientation";
 import Rect from "./Rect";
+import TitleApis from "./titleApis";
 import Layout from "./view/Layout";
 
 export {
-    Layout,
-    I18nLabel,
-    Actions,
-    Action,
-    Model,
-    Node,
-    RowNode,
-    SplitterNode,
-    TabNode,
-    TabSetNode,
-    BorderNode,
-    BorderSet,
-    DockLocation,
-    Orientation,
-    DragDrop,
-    DropInfo,
-    Rect
+  TitleApis,
+  Layout,
+  I18nLabel,
+  Actions,
+  Action,
+  Model,
+  Node,
+  RowNode,
+  SplitterNode,
+  TabNode,
+  TabSetNode,
+  BorderNode,
+  BorderSet,
+  DockLocation,
+  Orientation,
+  DragDrop,
+  DropInfo,
+  Rect
 };
 
 export default {
-    Layout,
-    I18nLabel,
-    Actions,
-    Action,
-    Model,
-    Node,
-    RowNode,
-    SplitterNode,
-    TabNode,
-    TabSetNode,
-    BorderNode,
-    BorderSet,
-    DockLocation,
-    Orientation,
-    DragDrop,
-    DropInfo,
-    Rect
+  TitleApis,
+  Layout,
+  I18nLabel,
+  Actions,
+  Action,
+  Model,
+  Node,
+  RowNode,
+  SplitterNode,
+  TabNode,
+  TabSetNode,
+  BorderNode,
+  BorderSet,
+  DockLocation,
+  Orientation,
+  DragDrop,
+  DropInfo,
+  Rect
 };
