@@ -1,40 +1,48 @@
 import { Subject } from "rxjs";
 
-const subject = (): Subject<{ nodeId: string; title: string }> | undefined => {
-  return (window as any).FlexLayoutTitleSubject;
+interface ITitles {
+  titles: { [nodeId: string]: string };
+  subject: Subject<{ nodeId: string; title: string }> | undefined;
+}
+
+const shared: ITitles = {
+  titles: {},
+  subject: undefined
 };
 
 export const init = () => {
-  let sub = subject();
-  if (sub === undefined) {
-    sub = new Subject<{ nodeId: string; title: string }>();
-    (window as any).FlexLayoutTitleSubject = sub;
+  if (shared.subject === undefined) {
+    shared.subject = new Subject<{ nodeId: string; title: string }>();
   }
-  return sub as Subject<{ nodeId: string; title: string }>;
 };
 
 export const release = () => {
-  const sub = subject();
-  if (sub !== undefined) {
-    (sub as Subject<{ nodeId: string; title: string }>).complete();
-    delete (window as any).FlexLayoutTitleSubject;
+  if (shared.subject !== undefined) {
+    shared.subject.complete();
+    delete shared.subject;
   }
 };
 
 export const subscribe = (
   next: (value: { nodeId: string; title: string }) => void
 ) => {
-  const subscription = init().subscribe(next);
+  init();
+
+  const subscription = shared.subject!.subscribe(next);
   return () => {
     subscription.unsubscribe();
   };
 };
 
 export const update = (payload: { nodeId: string; title: string }) => {
-  const s = subject();
-  if (s !== undefined) {
-    s.next(payload);
+  shared.titles[payload.nodeId] = payload.title;
+  if (shared.subject !== undefined) {
+    shared.subject.next(payload);
   }
 };
 
-export default { init, release, subscribe, update };
+export const title = (nodeId: string) => {
+  return shared.titles[nodeId] || "";
+};
+
+export default { init, release, subscribe, update, title };

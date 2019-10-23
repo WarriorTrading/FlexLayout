@@ -1,8 +1,4 @@
-import { Subject } from "rxjs";
-export declare const init: () => Subject<{
-    nodeId: string;
-    title: string;
-}>;
+export declare const init: () => void;
 export declare const release: () => void;
 export declare const subscribe: (next: (value: {
     nodeId: string;
@@ -12,11 +8,9 @@ export declare const update: (payload: {
     nodeId: string;
     title: string;
 }) => void;
+export declare const title: (nodeId: string) => string;
 declare const _default: {
-    init: () => Subject<{
-        nodeId: string;
-        title: string;
-    }>;
+    init: () => void;
     release: () => void;
     subscribe: (next: (value: {
         nodeId: string;
@@ -26,5 +20,6 @@ declare const _default: {
         nodeId: string;
         title: string;
     }) => void;
+    title: (nodeId: string) => string;
 };
 export default _default;

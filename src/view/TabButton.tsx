@@ -261,7 +261,7 @@ const Content = React.forwardRef<
       width: contentRef.current.getBoundingClientRect().width
     };
   }, [editing, contentRef]);
-  const [title, setTitle] = React.useState("");
+  const [title, setTitle] = React.useState(TitleApis.title(nodeId));
 
   React.useEffect(() => {
     let currentTitle: string = "";

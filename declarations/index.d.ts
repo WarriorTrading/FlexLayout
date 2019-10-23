@@ -19,10 +19,7 @@ import Layout from "./view/Layout";
 export { TitleApis, Layout, I18nLabel, Actions, Action, Model, Node, RowNode, SplitterNode, TabNode, TabSetNode, BorderNode, BorderSet, DockLocation, Orientation, DragDrop, DropInfo, Rect };
 declare const _default: {
     TitleApis: {
-        init: () => import("rxjs").Subject<{
-            nodeId: string;
-            title: string;
-        }>;
+        init: () => void;
         release: () => void;
         subscribe: (next: (value: {
             nodeId: string;
@@ -32,6 +29,7 @@ declare const _default: {
             nodeId: string;
             title: string;
         }) => void;
+        title: (nodeId: string) => string;
     };
     Layout: typeof Layout;
     I18nLabel: typeof I18nLabel;
