@@ -261,7 +261,7 @@ const Content = React.forwardRef<
       width: contentRef.current.getBoundingClientRect().width
     };
   }, [editing, contentRef]);
-  const [title, setTitle] = React.useState("Hello world");
+  const [title, setTitle] = React.useState("");
 
   React.useEffect(() => {
     let currentTitle: string = "";
