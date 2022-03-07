@@ -9,7 +9,7 @@ export declare const update: (payload: {
     title: string;
 }) => void;
 export declare const title: (nodeId: string) => string;
-declare const _default: {
+declare const TitleApis: {
     init: () => void;
     release: () => void;
     subscribe: (next: (value: {
@@ -22,4 +22,4 @@ declare const _default: {
     }) => void;
     title: (nodeId: string) => string;
 };
-export default _default;
+export default TitleApis;

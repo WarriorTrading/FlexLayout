@@ -45,4 +45,5 @@ export const title = (nodeId: string) => {
   return shared.titles[nodeId] || "";
 };
 
-export default { init, release, subscribe, update, title };
+const TitleApis = { init, release, subscribe, update, title };
+export default TitleApis;

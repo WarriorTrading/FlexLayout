@@ -22,3 +22,4 @@ export * from './I18nLabel';
 export * from './Orientation';
 export * from './Rect';
 export * from './Types';
+export * from './titleApis';
