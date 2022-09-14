@@ -8,11 +8,11 @@ FlexLayout is a layout manager that arranges React components in multiple tab se
 
 ![FlexLayout Demo Screenshot](/../screenshots/github_images/v0.5/demo1.png?raw=true "FlexLayout Demo Screenshot")
 
-[Run the Demo](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.6/demo/index.html)
+[Run the Demo](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.7/demo/index.html)
 
-Try it now using [JSFiddle](https://jsfiddle.net/18zfp0qm/)
+Try it now using [JSFiddle](https://jsfiddle.net/10kmLzvu/)
 
-[API Doc](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.6/typedoc/index.html)
+[API Doc](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.7/typedoc/index.html)
 
 [Screenshot of Caplin Liberator Explorer using FlexLayout](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.20/images/LiberatorExplorerV3_3.PNG)
 
@@ -27,19 +27,17 @@ Features:
 *	maximize tabset (double click tabset header or use icon)
 *	tab overflow (show menu when tabs overflow, scroll tabs using mouse wheel)
 *   border tabsets
-*   popout tabs into new browser windows (only enabled in latest browsers)
+*   popout tabs into new browser windows
 *	submodels, allow layouts inside layouts
 *	tab renaming (double click tab text to rename)
-*	themeing - light, gray and dark
+*	theming - light, underline, gray and dark
 *	touch events - works on mobile devices (iPad, Android)
 *   add tabs using drag, indirect drag, add to active tabset, add to tabset by id
 *   preferred pixel size tabsets (try to keep their size when window resizes)
 *   headed tabsets
 *	tab and tabset attributes: enableHeader, enableTabStrip, enableDock, enableDrop...
 *	customizable tabs and tabset header rendering
-*   esc cancels drag
 *	typescript type declarations included
-*	supports overriding css class names via the classNameMapper prop, for use in css modules
 
 ## Installation
 
@@ -55,11 +53,11 @@ Import React and FlexLayout in your modules:
 
 ```
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as FlexLayout from "flexlayout-react";
 ```
 
-Include the light, gray or dark style in your html:
+Include the light, underline, gray or dark style in your html:
 
 ```
 <link rel="stylesheet" href="node_modules/flexlayout-react/style/light.css" />
@@ -78,33 +76,7 @@ The `<Layout>` component renders the tabsets and splitters, it takes the followi
 | model           | the layout model  |
 | factory         | a factory function for creating React components |
 
-#### Optional props:
-
-
-| Prop            | Description       |
-| --------------- | ----------------- |
-| font            | the tab font (overrides value in css). Example: font={{size:"12px", style:"italic"}}|
-| icons           | object mapping keys among `close`, `maximize`, `restore`, `more`, `popout` to React nodes to use in place of the default icons, can alternatively return functions for creating the React nodes |
-| onAction        | function called whenever the layout generates an action to update the model (allows for intercepting actions before they are dispatched to the model, for example, asking the user to confirm a tab close.) Returning `undefined` from the function will halt the action, otherwise return the action to continue |
-| onRenderTab     | function called when rendering a tab, allows leading (icon), content section, buttons and name used in overflow menu to be customized |
-| onRenderTabSet  | function called when rendering a tabset, allows header and buttons to be customized |
-| onModelChange   | function called when model has changed |
-| onExternalDrag  | function called when an external object (not a tab) gets dragged onto the layout, with a single `dragenter` argument. Should return either `undefined` to reject the drag/drop or an object with keys `dragText`, `json`Drop`, to create a tab via drag (similar to a call to `addTabToTabSet`). Function `onDrop` is passed the added tab `Node` and the `drop` `DragEvent`, unless the drag was canceled. |
-| classNameMapper | function called with default css class name, return value is class name that will be used. Mainly for use with css modules.|
-| i18nMapper      | function called for each I18nLabel to allow user translation, currently used for tab and tabset move messages, return undefined to use default values |
-| supportsPopout  | if left undefined will do simple check based on userAgent |
-| popoutURL       | URL of popout window relative to origin, defaults to popout.html |
-| realtimeResize  | boolean value, defaults to false, resize tabs as splitters are dragged. Warning: this can cause resizing to become choppy when tabs are slow to draw |
-| onTabDrag       | function called while dragging a tab, whether from the layout or using `addTabWithDragAndDrop`. Called with the `TabNode` being dragged / the tab json from `addTabWithDragAndDrop`, the `TabNode` being dragged over, the x and y coordinates relative to the dragged-over tab, and the `DockLocation` that would be used. Should return undefined for default behavior, or an object containing `x`, `y`, `width`, `height`, `callback`, `cursor` fields. Coordinates are in pixels relative to the dragged-over tab, and `callback` will be called with the same arguments if the tab is dropped. `cursor` is an optional string field that should contain a CSS cursor value, such as `copy` or `row-resize`. If `callback` is called, the layout does not perform its default behavior on drop. |
-| onRenderDragRect | callback for rendering the drag rectangles |
-| onRenderFloatingTabPlaceholder | callback for rendering the floating tab placeholder |
-| onContextMenu    | callback for handling context actions on tabs and tabsets |
-| onAuxMouseClick  | callback for handling mouse clicks on tabs and tabsets with alt, meta, shift keys, also handles center mouse clicks |
-| onShowOverflowMenu | callback for handling the display of the tab overflow menu |
-| onTabSetPlaceHolder | callback for rendering a placeholder when a tabset is empty |
-| iconFactory      | a factory function for creating icon components for tab bar buttons. <br/><br/> NOTE: for greater customization of the tab use onRenderTab instead of this callback |
-| titleFactory     | a factory function for creating title components for tab bar buttons. <br /><br /> NOTE: for greater customization of the tab use onRenderTab instead of this callback  |
-
+Additional [optional props](#optional-props)
 
 The model is tree of Node objects that define the structure of the layout.
 
@@ -161,7 +133,7 @@ var json = {
 
 ```
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as FlexLayout from "flexlayout-react";
 
 class Main extends React.Component {
@@ -185,15 +157,15 @@ class Main extends React.Component {
     }
 }
 
-ReactDOM.render(<Main/>, document.getElementById("container"));
+const root = createRoot(document.getElementById("container"));
+root.render(<Main/>);
 ```		
-(See the examples for full source code)
 
 The above code would render two tabsets horizontally each containing a single tab that hosts a button component. The tabs could be moved and resized by dragging and dropping. Additional grids could be added to the layout by sending actions to the model.
 
-Try it now using [JSFiddle](https://jsfiddle.net/18zfp0qm/) 
+Try it now using [JSFiddle](https://jsfiddle.net/10kmLzvu/) 
 
-A simple Create React App (CRA) example (using typescript) can be found here:
+A simple Typescript example can be found here:
 
 https://github.com/nealus/FlexLayout_cra_example
 
@@ -219,7 +191,7 @@ The model json contains 3 top level elements:
 
 Weights on rows and tabsets specify the relative weight of these nodes within the parent row, the actual values do not matter just their relative values (ie two tabsets of weights 30,70 would render the same if they had weights of 3,7).
 
-NOTE: the easiest way to create your initial layout JSON is to use the [demo](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.6/demo/index.html) app, modify one of the 
+NOTE: the easiest way to create your initial layout JSON is to use the [demo](https://rawgit.com/caplin/FlexLayout/demos/demos/v0.7/demo/index.html) app, modify one of the 
 existing layouts by dragging/dropping and adding nodes then press the 'Show Layout JSON in console' button to print the JSON to the browser developer console.
 
 
@@ -304,11 +276,7 @@ tabs or drag and drop).
 ```
 ## Floating Tabs (Popouts)
 
-Note: this feature only works for Chrome, Firefox, Safari, latest Edge (the Chrome based one) and Opera, it does
-NOT work for any version of IE or the previous version of Edge. For unsupported browsers the popout icons
-will not be shown and any saved layout with popouts will show with all their tabs in the main layout.
-
-For supported browsers tabs can be rendered into external browser windows (for use in multi-monitor setups)
+Tabs can be rendered into external browser windows (for use in multi-monitor setups)
 by configuring them with the enableFloat attribute. When this attribute is present
 an additional icon is shown in the tab header bar allowing the tab to be popped out
 into an external window.
@@ -329,8 +297,36 @@ following method on one of the elements rendered in the popout (for example a re
 
 In the above code selfRef is a React ref to the toplevel element in the tab being rendered.
 
-Note: some libraries already support popout windows by allowing you to specify the document to use, 
+Note: some libraries support popout windows by allowing you to specify the document to use, 
 for example see the getDocument() callback in agGrid at https://www.ag-grid.com/javascript-grid-callbacks/
+
+## Optional Props
+
+
+| Prop            | Description       |
+| --------------- | ----------------- |
+| font            | the tab font (overrides value in css). Example: font={{size:"12px", style:"italic"}}|
+| icons           | object mapping keys among `close`, `maximize`, `restore`, `more`, `popout` to React nodes to use in place of the default icons, can alternatively return functions for creating the React nodes |
+| onAction        | function called whenever the layout generates an action to update the model (allows for intercepting actions before they are dispatched to the model, for example, asking the user to confirm a tab close.) Returning `undefined` from the function will halt the action, otherwise return the action to continue |
+| onRenderTab     | function called when rendering a tab, allows leading (icon), content section, buttons and name used in overflow menu to be customized |
+| onRenderTabSet  | function called when rendering a tabset, allows header and buttons to be customized |
+| onModelChange   | function called when model has changed |
+| onExternalDrag  | function called when an external object (not a tab) gets dragged onto the layout, with a single `dragenter` argument. Should return either `undefined` to reject the drag/drop or an object with keys `dragText`, `json`Drop`, to create a tab via drag (similar to a call to `addTabToTabSet`). Function `onDrop` is passed the added tab `Node` and the `drop` `DragEvent`, unless the drag was canceled. |
+| classNameMapper | function called with default css class name, return value is class name that will be used. Mainly for use with css modules.|
+| i18nMapper      | function called for each I18nLabel to allow user translation, currently used for tab and tabset move messages, return undefined to use default values |
+| supportsPopout  | if left undefined will do simple check based on userAgent |
+| popoutURL       | URL of popout window relative to origin, defaults to popout.html |
+| realtimeResize  | boolean value, defaults to false, resize tabs as splitters are dragged. Warning: this can cause resizing to become choppy when tabs are slow to draw |
+| onTabDrag       | function called while dragging a tab, whether from the layout or using `addTabWithDragAndDrop`. Called with the `TabNode` being dragged / the tab json from `addTabWithDragAndDrop`, the `TabNode` being dragged over, the x and y coordinates relative to the dragged-over tab, and the `DockLocation` that would be used. Should return undefined for default behavior, or an object containing `x`, `y`, `width`, `height`, `callback`, `cursor` fields. Coordinates are in pixels relative to the dragged-over tab, and `callback` will be called with the same arguments if the tab is dropped. `cursor` is an optional string field that should contain a CSS cursor value, such as `copy` or `row-resize`. If `callback` is called, the layout does not perform its default behavior on drop. |
+| onRenderDragRect | callback for rendering the drag rectangles |
+| onRenderFloatingTabPlaceholder | callback for rendering the floating tab placeholder |
+| onContextMenu    | callback for handling context actions on tabs and tabsets |
+| onAuxMouseClick  | callback for handling mouse clicks on tabs and tabsets with alt, meta, shift keys, also handles center mouse clicks |
+| onShowOverflowMenu | callback for handling the display of the tab overflow menu |
+| onTabSetPlaceHolder | callback for rendering a placeholder when a tabset is empty |
+| iconFactory      | a factory function for creating icon components for tab bar buttons. <br/><br/> NOTE: for greater customization of the tab use onRenderTab instead of this callback |
+| titleFactory     | a factory function for creating title components for tab bar buttons. <br /><br /> NOTE: for greater customization of the tab use onRenderTab instead of this callback  |
+
 
 ## Global Config attributes
 
@@ -553,6 +549,7 @@ This would add a new grid component to the tabset with id "NAVIGATION" (where th
 | addTabToActiveTabSet(json) | adds a new tab to the active tabset |
 | addTabWithDragAndDrop(dragText, json, onDrop) | adds a new tab by dragging a marker to the required location, with the drag starting immediately; on success, `onDrop` is passed the created tab `Node`; on cancel, no arguments are passed |
 | addTabWithDragAndDropIndirect(dragText, json, onDrop) | adds a new tab by dragging a marker to the required location, the marker is shown and must be clicked on to start dragging |
+| moveTabWithDragAndDrop( node, dragText) | Move a tab/tabset using drag and drop triggered from a custom event |
 
 ## Tab Node Events
 
@@ -610,6 +607,15 @@ yarn cypress
 
 
 To build the npm distribution run 'yarn build', this will create the artifacts in the dist dir.
+
+## Alternative Layout Managers
+
+| Name | Repository |
+| ------------- |:-------------|
+| rc-dock | https://github.com/ticlo/rc-dock | 
+| lumino | https://github.com/jupyterlab/lumino | 
+| golden-layout | https://github.com/golden-layout/golden-layout |
+| react-mosaic | https://github.com/nomcopter/react-mosaic |
 
 
 

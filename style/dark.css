@@ -8,13 +8,14 @@
   --color-4: #333333;
   --color-5: #404040;
   --color-6: #4d4d4d;
-  --color-drag1: #cfe8ff;
-  --color-drag2: #b7d1b5;
+  --color-drag1: rgb(207, 232, 255);
+  --color-drag2: rgb(183, 209, 181);
   --color-drag1-background: rgba(128, 128, 128, 0.15);
   --color-drag2-background: rgba(128, 128, 128, 0.15);
   --font-size: medium;
   --font-family: Roboto, Arial, sans-serif;
   --color-overflow: gray;
+  --color-icon: gray;
   --color-tabset-background: var(--color-1);
   --color-tabset-background-selected: var(--color-1);
   --color-tabset-background-maximized: var(--color-6);
@@ -307,7 +308,7 @@
 .flexlayout__tab_toolbar_sticky_buttons_container {
   display: flex;
   gap: 0.3em;
-  padding-left: 2px;
+  padding-left: 5px;
   align-items: center;
 }
 .flexlayout__tab_floating {

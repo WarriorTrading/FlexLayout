@@ -4,7 +4,7 @@ import { Actions } from "../model/Actions";
 import { TabNode } from "../model/TabNode";
 import { TabSetNode } from "../model/TabSetNode";
 import { showPopup } from "../PopupMenu";
-import { IIcons, ILayoutCallbacks } from "./Layout";
+import { IIcons, ILayoutCallbacks, ITitleObject } from "./Layout";
 import { TabButton } from "./TabButton";
 import { useTabOverflow } from "./TabOverflowHook";
 import { Orientation } from "../Orientation";
@@ -15,8 +15,8 @@ import { hideElement, isAuxMouseEvent } from "./Utils";
 export interface ITabSetProps {
     layout: ILayoutCallbacks;
     node: TabSetNode;
-    iconFactory?: (node: TabNode) => React.ReactNode | undefined;
-    titleFactory?: (node: TabNode) => React.ReactNode | undefined;
+    iconFactory?: (node: TabNode) => (React.ReactNode | undefined);
+    titleFactory?: (node: TabNode) => (ITitleObject | React.ReactNode | undefined);
     icons: IIcons;
     editingTab?: TabNode;
     path?: string;
@@ -67,7 +67,11 @@ export const TabSet = (props: ITabSetProps) => {
             layout.doAction(Actions.setActiveTabset(node.getId()));
             if (!layout.getEditingTab()) {
                 const message = layout.i18nName(I18nLabel.Move_Tabset, name);
-                layout.dragStart(event, message, node, node.isEnableDrag(), (event2: Event) => undefined, onDoubleClick);
+                if (node.getModel().getMaximizedTabset() !== undefined) {
+                    layout.dragStart(event, message, node, false, (event2: Event) => undefined, onDoubleClick);
+                } else {
+                    layout.dragStart(event, message, node, node.isEnableDrag(), (event2: Event) => undefined, onDoubleClick);
+                }
             }
         }
     };
@@ -142,9 +146,11 @@ export const TabSet = (props: ITabSetProps) => {
                     titleFactory={titleFactory}
                     icons={icons}
                 />);
-                tabs.push(
-                    <div  key={"divider" + i} className={cm(CLASSES.FLEXLAYOUT__TABSET_TAB_DIVIDER)}></div>
-                );
+                if (i < node.getChildren().length-1) {
+                    tabs.push(
+                        <div  key={"divider" + i} className={cm(CLASSES.FLEXLAYOUT__TABSET_TAB_DIVIDER)}></div>
+                    );
+                }
         }
     }
 

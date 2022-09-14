@@ -1,24 +1,29 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as Prism from "prismjs";
+import { createRoot } from "react-dom/client";
 import { Action, Actions, BorderNode, CLASSES, DockLocation, DragDrop, DropInfo, IJsonTabNode, ILayoutProps, ITabRenderValues, ITabSetRenderValues, Layout, Model, Node, TabNode, TabSetNode } from "../../src/index";
 import { NewFeatures } from "./NewFeatures";
 import { showPopup } from "./PopupMenu";
 import { TabStorage } from "./TabStorage";
 import { Utils } from "./Utils";
+import "prismjs/themes/prism-coy.css";
 
 var fields = ["Name", "Field1", "Field2", "Field3", "Field4", "Field5"];
 
 const ContextExample = React.createContext('');
 
-class App extends React.Component<any, { layoutFile: string | null, model: Model | null, adding: boolean, fontSize: string, realtimeResize: boolean }> {
+class App extends React.Component<any, { layoutFile: string | null, model: Model | null, json?: string, adding: boolean, fontSize: string, realtimeResize: boolean }> {
 
     loadingLayoutName?: string;
     nextGridIndex: number = 1;
     showingPopupMenu: boolean = false;
+    htmlTimer?: any = null;
+    layoutRef?: React.RefObject<Layout>;
 
     constructor(props: any) {
         super(props);
         this.state = { layoutFile: null, model: null, adding: false, fontSize: "medium", realtimeResize: false };
+        this.layoutRef = React.createRef();
 
         // save layout when unloading page
         window.onbeforeunload = (event: Event) => {
@@ -40,9 +45,21 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
         // Model.toTypescriptInterfaces();
     }
 
+    onModelChange = () => {
+        if (this.htmlTimer) {
+            clearTimeout(this.htmlTimer);
+        }
+        this.htmlTimer = setTimeout(() => {
+            const jsonText = JSON.stringify(this.state.model!.toJson(), null, "\t");
+            const html = Prism.highlight(jsonText, Prism.languages.javascript, 'javascript');
+            this.setState({ json: html });
+            this.htmlTimer = null;
+        }, 500);
+    }
+
     save() {
-        var jsonStr = JSON.stringify(this.state.model!.toJson(), null, "\t");
-        localStorage.setItem(this.state.layoutFile!, jsonStr);
+         var jsonStr = JSON.stringify(this.state.model!.toJson(), null, "\t");
+         localStorage.setItem(this.state.layoutFile!, jsonStr);
     }
 
     loadLayout(layoutName: string, reload?: boolean) {
@@ -77,7 +94,8 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
         // you can control where nodes can be dropped
         //model.setOnAllowDrop(this.allowDrop);
 
-        this.setState({ layoutFile: this.loadingLayoutName!, model: model });
+        const html = Prism.highlight(jsonText, Prism.languages.javascript, 'javascript');
+        this.setState({ layoutFile: this.loadingLayoutName!, model: model, json: html });
     }
 
     allowDrop = (dragNode: (TabNode | TabSetNode), dropInfo: DropInfo) => {
@@ -101,43 +119,35 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
     onAddDragMouseDown = (event: React.MouseEvent | React.TouchEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         event.preventDefault();
-        if (this.state.model!.getMaximizedTabset() == null) {
-            (this.refs.layout as Layout).addTabWithDragAndDrop(undefined, {
-                component: "grid",
-                icon: "images/article.svg",
-                name: "Grid " + this.nextGridIndex++
-            }, this.onAdded);
-            // this.setState({ adding: true });
-        }   
+        (this.layoutRef!.current!).addTabWithDragAndDrop(undefined, {
+            component: "grid",
+            icon: "images/article.svg",
+            name: "Grid " + this.nextGridIndex++
+        }, this.onAdded);
+        // this.setState({ adding: true });
     }
 
     onAddActiveClick = (event: React.MouseEvent) => {
-        if (this.state.model!.getMaximizedTabset() == null) {
-            (this.refs.layout as Layout).addTabToActiveTabSet({
-                component: "grid",
-                icon: "images/article.svg",
-                name: "Grid " + this.nextGridIndex++
-            });
-        }
+        (this.layoutRef!.current!).addTabToActiveTabSet({
+            component: "grid",
+            icon: "images/article.svg",
+            name: "Grid " + this.nextGridIndex++
+        });
     }
 
     onAddFromTabSetButton = (node: TabSetNode | BorderNode) => {
-        // if (this.state.model!.getMaximizedTabset() == null) {
-        (this.refs.layout as Layout).addTabToTabSet(node.getId(), {
+        (this.layoutRef!.current!).addTabToTabSet(node.getId(), {
             component: "grid",
             name: "Grid " + this.nextGridIndex++
         });
-        // }
     }
 
     onAddIndirectClick = (event: React.MouseEvent) => {
-        if (this.state.model!.getMaximizedTabset() == null) {
-            (this.refs.layout as Layout).addTabWithDragAndDropIndirect("Add grid\n(Drag to location)", {
-                component: "grid",
-                name: "Grid " + this.nextGridIndex++
-            }, this.onAdded);
-            this.setState({ adding: true });
-        }
+        (this.layoutRef!.current!).addTabWithDragAndDropIndirect("Add grid\n(Drag to location)", {
+            component: "grid",
+            name: "Grid " + this.nextGridIndex++
+        }, this.onAdded);
+        this.setState({ adding: true });
     }
 
     onRealtimeResize = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +165,7 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
                     This is a customized<br />
                     drag rectangle
                 </div>
-                </>
+            </>
             );
         } else {
             return undefined; // use default rendering
@@ -169,7 +179,7 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
             console.log(node, event);
             showPopup(
                 node instanceof TabNode ? "Tab: " + node.getName() : "Type: " + node.getType(),
-                (this.refs.layout as Layout).getRootDiv(),
+                (this.layoutRef!.current!).getRootDiv(),
                 event.clientX, event.clientY,
                 ["Option 1", "Option 2"],
                 (item: string | undefined) => {
@@ -258,6 +268,11 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
     onTableClick = (node: Node, event: Event) => {
         // console.log("tab: \n" + node._toAttributeString());
         // console.log("tabset: \n" + node.getParent()!._toAttributeString());
+
+        // const n = this.state.model?.getNodeById("#750f823f-8eda-44b7-a887-f8b287ace2c8");
+        // (this.refs.layout as Layout).moveTabWithDragAndDrop(n as TabSetNode, "move tabset");
+
+        // (this.refs.layout as Layout).moveTabWithDragAndDrop(node as TabNode);
     }
 
     onAction = (action: Action) => {
@@ -272,7 +287,10 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
 
         var component = node.getComponent();
 
-        if (component === "grid") {
+        if (component === "json") {
+            return (<pre style={{ tabSize: "20px" }} dangerouslySetInnerHTML={{ __html: this.state.json! }} />);
+        }
+        else if (component === "grid") {
             if (node.getExtraData().data == null) {
                 // create data in node extra data first time accessed
                 node.getExtraData().data = this.makeFakeData();
@@ -301,10 +319,10 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
             } catch (e) {
                 console.log(e);
             }
-        } 
+        }
         else if (component === "newfeatures") {
             return <NewFeatures />;
-        } 
+        }
         else if (component === "multitype") {
             try {
                 const config = node.getConfig();
@@ -323,7 +341,7 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
             }
         }
         else if (component === "tabstorage") {
-            return <TabStorage tab={node} layout={this.refs.layout as Layout} />
+            return <TabStorage tab={node} layout={this.layoutRef!.current!} />
         }
 
         return null;
@@ -396,7 +414,7 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
         }
     }
 
-    onTabSetPlaceHolder(node: TabSetNode){
+    onTabSetPlaceHolder(node: TabSetNode) {
         return <div>Drag tabs to this area</div>;
     }
 
@@ -404,15 +422,14 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
 
 
         let contents: React.ReactNode = "loading ...";
-        let maximized = false;
         if (this.state.model !== null) {
-            maximized = this.state.model.getMaximizedTabset() !== undefined;
             contents = <Layout
-                ref="layout"
+                ref={this.layoutRef}
                 model={this.state.model}
                 factory={this.factory}
                 font={{ size: this.state.fontSize }}
                 onAction={this.onAction}
+                onModelChange={this.onModelChange}
                 titleFactory={this.titleFactory}
                 iconFactory={this.iconFactory}
                 onRenderTab={this.onRenderTab}
@@ -454,65 +471,65 @@ class App extends React.Component<any, { layoutFile: string | null, model: Model
         }
 
         return (
+            <React.StrictMode>
             <ContextExample.Provider value="from context">
                 <div className="app">
-            <div className="toolbar" dir="ltr">
-                <select className="toolbar_control" onChange={this.onSelectLayout}>
-                    <option value="default">Default</option>
-                    <option value="newfeatures">New Features</option>
-                    <option value="simple">Simple</option>
-                    <option value="justsplitters">Just Splitters</option>
-                    <option value="sub">SubLayout</option>
-                    <option value="complex">Complex</option>
-                    <option value="preferred">Using Preferred size</option>
-                    <option value="trader">Trader</option>
-                </select>
-                <button className="toolbar_control" onClick={this.onReloadFromFile} style={{ marginLeft: 5 }}>Reload</button>
-                <div style={{ flexGrow: 1 }}></div>
-                <span style={{ fontSize: "14px" }}>Realtime resize</span>
-                <input
-                    name="realtimeResize"
-                    type="checkbox"
-                    checked={this.state.realtimeResize}
-                    onChange={this.onRealtimeResize} />
-                <select  className="toolbar_control" style={{ marginLeft: 5 }}
-                    onChange={this.onSizeChange}
-                    defaultValue="medium">
-                    <option value="xx-small">Size xx-small</option>
-                    <option value="x-small">Size x-small</option>
-                    <option value="small">Size small</option>
-                    <option value="medium">Size medium</option>
-                    <option value="large">Size large</option>
-                    <option value="8px">Size 8px</option>
-                    <option value="10px">Size 10px</option>
-                    <option value="12px">Size 12px</option>
-                    <option value="14px">Size 14px</option>
-                    <option value="16px">Size 16px</option>
-                    <option value="18px">Size 18px</option>
-                    <option value="20px">Size 20px</option>
-                    <option value="25px">Size 25px</option>
-                    <option value="30px">Size 30px</option>
-                </select>
-                <select  className="toolbar_control" style={{ marginLeft: 5 }} defaultValue="light" onChange={this.onThemeChange}>
-                    <option value="underline">Underline</option>
-                    <option value="light">Light</option>
-                    <option value="gray">Gray</option>
-                    <option value="dark">Dark</option>
-                </select>
-                <button className="toolbar_control" style={{ marginLeft: 5 }} onClick={this.onShowLayoutClick}>Show Layout JSON in Console</button>
-                <button className="toolbar_control drag-from" disabled={this.state.adding || maximized}
-                    style={{ height: "30px", marginLeft: 5, border: "none", outline: "none" }}
-                    title="Add using Layout.addTabWithDragAndDrop"
-                    onMouseDown={this.onAddDragMouseDown}
-                    onTouchStart={this.onAddDragMouseDown}>Add Drag</button>
-                <button className="toolbar_control" disabled={this.state.adding || maximized} style={{ marginLeft: 5 }} title="Add using Layout.addTabToActiveTabSet" onClick={this.onAddActiveClick}>Add Active</button>
-                <button className="toolbar_control" disabled={this.state.adding || maximized} style={{ marginLeft: 5 }} title="Add using Layout.addTabWithDragAndDropIndirect" onClick={this.onAddIndirectClick}>Add Indirect</button>
-            </div>
-            <div className="contents">
-                {contents}
-            </div>
-        </div>
-        </ContextExample.Provider>);
+                    <div className="toolbar" dir="ltr">
+                        <select className="toolbar_control" onChange={this.onSelectLayout}>
+                            <option value="default">Default</option>
+                            <option value="newfeatures">New Features</option>
+                            <option value="simple">Simple</option>
+                            <option value="sub">SubLayout</option>
+                            <option value="complex">Complex</option>
+                            <option value="headers">Headers</option>
+                        </select>
+                        <button className="toolbar_control" onClick={this.onReloadFromFile} style={{ marginLeft: 5 }}>Reload</button>
+                        <div style={{ flexGrow: 1 }}></div>
+                        <span style={{ fontSize: "14px" }}>Realtime resize</span>
+                        <input
+                            name="realtimeResize"
+                            type="checkbox"
+                            checked={this.state.realtimeResize}
+                            onChange={this.onRealtimeResize} />
+                        <select className="toolbar_control" style={{ marginLeft: 5 }}
+                            onChange={this.onSizeChange}
+                            defaultValue="medium">
+                            <option value="xx-small">Size xx-small</option>
+                            <option value="x-small">Size x-small</option>
+                            <option value="small">Size small</option>
+                            <option value="medium">Size medium</option>
+                            <option value="large">Size large</option>
+                            <option value="8px">Size 8px</option>
+                            <option value="10px">Size 10px</option>
+                            <option value="12px">Size 12px</option>
+                            <option value="14px">Size 14px</option>
+                            <option value="16px">Size 16px</option>
+                            <option value="18px">Size 18px</option>
+                            <option value="20px">Size 20px</option>
+                            <option value="25px">Size 25px</option>
+                            <option value="30px">Size 30px</option>
+                        </select>
+                        <select className="toolbar_control" style={{ marginLeft: 5 }} defaultValue="light" onChange={this.onThemeChange}>
+                            <option value="underline">Underline</option>
+                            <option value="light">Light</option>
+                            <option value="gray">Gray</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                        <button className="toolbar_control" style={{ marginLeft: 5 }} onClick={this.onShowLayoutClick}>Show Layout JSON in Console</button>
+                        <button className="toolbar_control drag-from" disabled={this.state.adding}
+                            style={{ height: "30px", marginLeft: 5, border: "none", outline: "none" }}
+                            title="Add using Layout.addTabWithDragAndDrop"
+                            onMouseDown={this.onAddDragMouseDown}
+                            onTouchStart={this.onAddDragMouseDown}>Add Drag</button>
+                        <button className="toolbar_control" disabled={this.state.adding} style={{ marginLeft: 5 }} title="Add using Layout.addTabToActiveTabSet" onClick={this.onAddActiveClick}>Add Active</button>
+                        <button className="toolbar_control" disabled={this.state.adding} style={{ marginLeft: 5 }} title="Add using Layout.addTabWithDragAndDropIndirect" onClick={this.onAddIndirectClick}>Add Indirect</button>
+                    </div>
+                    <div className="contents">
+                        {contents}
+                    </div>
+                </div>
+            </ContextExample.Provider>
+            </React.StrictMode>);
     }
 
     makeFakeData() {
@@ -570,4 +587,5 @@ class SimpleTable extends React.Component<{ fields: any, data: any, onClick: any
 //     return <span>{value}</span>;
 // }
 
-ReactDOM.render(<App />, document.getElementById("container"));
+const root = createRoot(document.getElementById("container")!);
+root.render(<App />)

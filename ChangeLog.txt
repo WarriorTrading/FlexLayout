@@ -1,3 +1,29 @@
+0.7.4
+Fixed popout windows when using </React.StrictMode>
+Output now targets ES6
+
+0.7.3
+Fixed right edge marker location when border enableAutoHide
+Dragging out a selected border tab will now leave the border unselected
+
+0.7.2
+New Layout JSON tabs to demo
+Added --color-icon css rootOrientationVertical
+
+0.7.1
+Fix for #310 - Added new layout method: moveTabWithDragAndDrop(node) to allow tab dragging to be
+started from custom code.
+
+0.7.0
+Updated dependencies, in particular changed React peer dependency to React 18
+Made changes for React 18
+
+0.6.10
+fix for #312, chrome warning for wheel event listener 
+
+0.6.9
+fix for #308, Allow dragging within a maximized tabset
+
 0.6.8
 Added onTabSetPlaceHolder prop to render the tabset area when there are no tabs.
 

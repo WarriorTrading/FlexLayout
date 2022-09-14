@@ -11,8 +11,8 @@ var json = {
                 "children": [
                     {
                         "type": "tab",
-                        "name": "FX",
-                        "component": "button"
+                        "name": "One",
+                        "component": "panel"
                     }
                 ]
             },
@@ -23,8 +23,20 @@ var json = {
                 "children": [
                     {
                         "type": "tab",
-                        "name": "FI",
-                        "component": "button"
+                        "name": "Two",
+                        "component": "panel"
+                    }
+                ]
+            },
+            {
+                "type": "tabset",
+                "weight": 50,
+                "selected": 0,
+                "children": [
+                    {
+                        "type": "tab",
+                        "name": "Three",
+                        "component": "panel"
                     }
                 ]
             }
@@ -41,8 +53,8 @@ class Main extends React.Component {
 
     factory = (node) => {
         var component = node.getComponent();
-        if (component === "button") {
-            return <button>{node.getName()}</button>;
+        if (component === "panel") {
+            return <div className="tab_content">{node.getName()}</div>;
         }
     }
 
@@ -55,4 +67,4 @@ class Main extends React.Component {
     }
 }
 
-ReactDOM.render(<Main/>, document.getElementById("container"));
+ReactDOM.createRoot(document.getElementById("container")).render(<Main/>);

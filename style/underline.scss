@@ -35,6 +35,7 @@ $font-family: Roboto, Arial, sans-serif !default;
         --font-family: #{$font_family};
 
         --color-overflow: gray;
+        --color-icon: gray;
 
         --color-tabset-background: var(--color-background);
         --color-tabset-background-selected: var(--color-1);
@@ -77,6 +78,7 @@ $font-family: Roboto, Arial, sans-serif !default;
 
         --color-underline: rgb(65, 105, 225);
         --color-underline-hover: #aaa;
+        --underline_height: 3px;
     }
 }
 
@@ -102,18 +104,20 @@ $font-family: Roboto, Arial, sans-serif !default;
 }
 
 @mixin tab_button_mixin {
+    padding: 2px 0.5em calc(4px - var(--underline_height)) 0.5em;
 }
 
 @mixin tab_button_selected_mixin {
-    border-bottom: 3px solid  var(--color-underline);
+    border-bottom: var(--underline_height) solid  var(--color-underline);
 }
 
 @mixin tab_button_unselected_mixin {
     color: gray;
+    border-bottom: var(--underline_height) solid transparent;
 }
 
 @mixin tab_button_hovered_mixin {
-    border-bottom: 3px solid  var(--color-underline-hover);
+    border-bottom: var(--underline_height) solid  var(--color-underline-hover);
 }
 
 @mixin close_button_hovered_mixin {
@@ -128,17 +132,19 @@ $font-family: Roboto, Arial, sans-serif !default;
 }
 
 @mixin border_button_mixin {
+    padding: 2px 0.5em calc(4px - var(--underline_height)) 0.5em;
 }
 
 @mixin border_button_selected_mixin {
-    border-bottom: 3px solid  var(--color-underline);
+    border-bottom: var(--underline_height) solid  var(--color-underline);
 }
 
 @mixin border_button_unselected_mixin {
-}
+    border-bottom: var(--underline_height) solid transparent;
+    }
 
 @mixin border_button_hovered_mixin {
-    border-bottom: 3px solid  var(--color-underline-hover);
+    border-bottom: var(--underline_height) solid  var(--color-underline-hover);
 }
 
 @mixin splitter_mixin {

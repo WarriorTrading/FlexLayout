@@ -3,7 +3,7 @@ import { DockLocation } from "../DockLocation";
 import { BorderNode } from "../model/BorderNode";
 import { TabNode } from "../model/TabNode";
 import { BorderButton } from "./BorderButton";
-import { IIcons, ILayoutCallbacks } from "./Layout";
+import { IIcons, ILayoutCallbacks, ITitleObject } from "./Layout";
 import { showPopup } from "../PopupMenu";
 import { Actions } from "../model/Actions";
 import { I18nLabel } from "../I18nLabel";
@@ -16,8 +16,8 @@ import { isAuxMouseEvent } from "./Utils";
 export interface IBorderTabSetProps {
     border: BorderNode;
     layout: ILayoutCallbacks;
-    iconFactory?: (node: TabNode) => React.ReactNode | undefined;
-    titleFactory?: (node: TabNode) => React.ReactNode | undefined;
+    iconFactory?: (node: TabNode) => (React.ReactNode | undefined);
+    titleFactory?: (node: TabNode) => (ITitleObject | React.ReactNode | undefined);
     icons: IIcons;
     path: string;
 }
@@ -97,9 +97,11 @@ export const BorderTabSet = (props: IBorderTabSetProps) => {
                 icons={icons}
             />
         );
-        tabs.push(
-            <div key={"divider" + i} className={cm(CLASSES.FLEXLAYOUT__BORDER_TAB_DIVIDER)}></div>
-        );
+        if (i < border.getChildren().length-1) {
+            tabs.push(
+                <div key={"divider" + i} className={cm(CLASSES.FLEXLAYOUT__BORDER_TAB_DIVIDER)}></div>
+            );
+        }
 
     };
 
@@ -114,7 +116,7 @@ export const BorderTabSet = (props: IBorderTabSetProps) => {
 
     // allow customization of tabset right/bottom buttons
     let buttons: any[] = [];
-    const renderState = { headerContent: {}, buttons, stickyButtons: [], headerButtons: [] };
+    const renderState = { headerContent: undefined, buttons, stickyButtons: [], headerButtons: [] };
     layout.customizeTabSet(border, renderState);
     buttons = renderState.buttons;
 

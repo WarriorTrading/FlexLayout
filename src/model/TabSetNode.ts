@@ -274,7 +274,10 @@ export class TabSetNode extends Node implements IDraggable, IDropTarget {
             const outlineRect = this._tabHeaderRect;
             dropInfo = new DropInfo(this, outlineRect!, dockLocation, -1, CLASSES.FLEXLAYOUT__OUTLINE_RECT);
         } else if (this._contentRect!.contains(x, y)) {
-            const dockLocation = DockLocation.getLocation(this._contentRect!, x, y);
+            let dockLocation = DockLocation.CENTER;
+            if (this._model.getMaximizedTabset() === undefined) {
+                dockLocation = DockLocation.getLocation(this._contentRect!, x, y);
+            }
             const outlineRect = dockLocation.getDockRect(this._rect);
             dropInfo = new DropInfo(this, outlineRect, dockLocation, -1, CLASSES.FLEXLAYOUT__OUTLINE_RECT);
         } else if (this._tabHeaderRect != null && this._tabHeaderRect.contains(x, y)) {
@@ -386,7 +389,12 @@ export class TabSetNode extends Node implements IDraggable, IDropTarget {
         let fromIndex = 0;
         if (dragParent !== undefined) {
             fromIndex = dragParent._removeChild(dragNode);
-            adjustSelectedIndex(dragParent, fromIndex);
+            // if selected node in border is being docked into tabset then deselect border tabs
+            if (dragParent instanceof BorderNode && dragParent.getSelected() === fromIndex) {
+                dragParent._setSelected(-1);
+            } else {
+                adjustSelectedIndex(dragParent, fromIndex);
+            }
         }
 
         // if dropping a tab back to same tabset and moving to forward position then reduce insertion index
