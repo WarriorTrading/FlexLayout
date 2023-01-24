@@ -114,7 +114,7 @@ export class Model {
     /** @internal */
     private _idMap: Record<string, Node>;
     /** @internal */
-    private _changeListener?: () => void;
+    private _changeListener?: (action: Action) => void;
     /** @internal */
     private _root?: RowNode;
     /** @internal */
@@ -149,7 +149,7 @@ export class Model {
     }
 
     /** @internal */
-    _setChangeListener(listener: (() => void) | undefined) {
+    _setChangeListener(listener: ((action: Action) => void) | undefined) {
         this._changeListener = listener;
     }
 
@@ -401,7 +401,7 @@ export class Model {
         this._updateIdMap();
 
         if (this._changeListener !== undefined) {
-            this._changeListener();
+            this._changeListener(action);
         }
 
         return returnVal;
