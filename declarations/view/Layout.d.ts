@@ -21,13 +21,15 @@ export declare type ShowOverflowMenuCallback = (node: TabSetNode | BorderNode, m
     node: TabNode;
 }) => void) => void;
 export declare type TabSetPlaceHolderCallback = (node: TabSetNode) => React.ReactNode;
+export declare type IconFactory = (node: TabNode) => React.ReactNode;
+export declare type TitleFactory = (node: TabNode) => ITitleObject | React.ReactNode;
 export interface ILayoutProps {
     model: Model;
     factory: (node: TabNode) => React.ReactNode;
     font?: IFontValues;
     fontFamily?: string;
-    iconFactory?: (node: TabNode) => React.ReactNode | undefined;
-    titleFactory?: (node: TabNode) => ITitleObject | React.ReactNode | undefined;
+    iconFactory?: IconFactory;
+    titleFactory?: TitleFactory;
     icons?: IIcons;
     onAction?: (action: Action) => Action | undefined;
     onRenderTab?: (node: TabNode, renderValues: ITabRenderValues) => void;
@@ -89,7 +91,8 @@ export interface ILayoutState {
     calculatedBorderBarSize: number;
     editingTab?: TabNode;
     showHiddenBorder: DockLocation;
-    portal?: React.ReactNode;
+    portal?: React.ReactPortal;
+    showEdges?: boolean;
 }
 export interface IIcons {
     close?: (React.ReactNode | ((tabNode: TabNode) => React.ReactNode));
@@ -136,6 +139,12 @@ export declare class Layout extends React.Component<ILayoutProps, ILayoutState> 
      * @param onDrop a callback to call when the drag is complete (node and event will be undefined if the drag was cancelled)
      */
     addTabWithDragAndDrop(dragText: string | undefined, json: IJsonTabNode, onDrop?: (node?: Node, event?: Event) => void): void;
+    /**
+     * Move a tab/tabset using drag and drop
+     * @param node the tab or tabset to drag
+     * @param dragText the text to show on the drag panel
+     */
+    moveTabWithDragAndDrop(node: (TabNode | TabSetNode), dragText?: string): void;
     /**
      * Adds a new tab by dragging a labeled panel to the drop location, dragging starts when you
      * mouse down on the panel
