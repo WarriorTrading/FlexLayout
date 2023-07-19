@@ -6,7 +6,7 @@ import { Rect } from "../Rect";
 import { IDraggable } from "./IDraggable";
 import { IJsonBorderNode, IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "./IJsonModel";
 import { Model, ILayoutMetrics } from "./Model";
-import { SHA256 } from "crypto-js";
+// import { SHA256 } from "crypto-js";
 import { v4 as getUUID } from "uuid";
 
 let id = 0
@@ -16,7 +16,8 @@ function getGeneratedSeedId() {
     if(window.name != null) {
         window.name = getUUID();
     }
-    const newSeedId =  SHA256(window.name + id);
+    // const newSeedId =  SHA256(window.name + '--' + id);
+    const newSeedId= window.name + '--' + id;
     id++;
     return newSeedId;
 }
