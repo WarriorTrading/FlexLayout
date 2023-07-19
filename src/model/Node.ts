@@ -124,7 +124,7 @@ export abstract class Node {
 
     /** @internal */
     _setId(id: string) {
-        this._attributes.seedId = id;
+        this._attributes.id = id;
     }
 
     /** @internal */
