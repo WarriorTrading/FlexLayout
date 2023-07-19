@@ -52,14 +52,14 @@ export abstract class Node {
         return id as string;
     }
 
-    getUUID() {
-      let uuid = this._attributes.uuid;
+    getSeedId() {
+      let uuid = this._attributes.seedId;
       if (uuid !== undefined) {
           return uuid as string;
       }
 
       uuid = this._model._nextUniqueId();
-      this._setUUID(uuid);
+      this._setSeedId(uuid);
 
       return uuid as string;
     }
@@ -109,11 +109,11 @@ export abstract class Node {
 
     /** @internal */
     _setId(id: string) {
-        this._attributes.id = id;
+        this._attributes.seedId = id;
     }
 
     /** @internal */
-    _setUUID(uuid: string) {
+    _setSeedId(uuid: string) {
         this._attributes.uuid = uuid;
     }
 

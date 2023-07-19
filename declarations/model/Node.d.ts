@@ -4,7 +4,7 @@ import { IJsonBorderNode, IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "./
 import { Model } from "./Model";
 export declare abstract class Node {
     getId(): string;
-    getUUID(): string;
+    getSeedId(): string;
     getModel(): Model;
     getType(): string;
     getParent(): Node | undefined;
