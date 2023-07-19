@@ -2,6 +2,7 @@ import { TabSetNode } from "./TabSetNode";
 import { BorderNode } from "./BorderNode";
 import { RowNode } from "./RowNode";
 import { TabNode } from "./TabNode";
+import { randomUUID, createHmac } from "crypto";
 
 /** @internal */
 export function adjustSelectedIndexAfterFloat(node: TabNode) {
@@ -66,4 +67,16 @@ export function adjustSelectedIndex(parent: TabSetNode | BorderNode | RowNode, r
             }
         }
     }
+}
+
+let id = 0
+
+/** @internal */
+export function getSeedId() {
+    if(window.name != null) {
+        window.name = randomUUID();
+    }
+    const newSeedId =  createHmac('sha256', window.name).update(id.toString()).digest('hex');
+    id++;
+    return newSeedId;
 }

@@ -6,6 +6,7 @@ import { Rect } from "../Rect";
 import { IDraggable } from "./IDraggable";
 import { IJsonBorderNode, IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "./IJsonModel";
 import { Model, ILayoutMetrics } from "./Model";
+import { getSeedId } from "./Utils";
 
 export abstract class Node {
     /** @internal */
@@ -28,6 +29,8 @@ export abstract class Node {
     protected _dirty: boolean = false;
     /** @internal */
     protected _tempSize: number = 0;
+    /** @internal */
+    protected _widgetCount: number = 0;
 
     /** @internal */
     protected constructor(model: Model) {
@@ -52,16 +55,16 @@ export abstract class Node {
         return id as string;
     }
 
-    getUUID() {
-      let uuid = this._attributes.uuid;
-      if (uuid !== undefined) {
-          return uuid as string;
+    getSeedId() {
+      let id = this._attributes.seedId;
+      if (id !== undefined) {
+          return id as string;
       }
 
-      uuid = this._model._nextUniqueId();
-      this._setUUID(uuid);
+      id = getSeedId();
+      this._setSeedId(id);
 
-      return uuid as string;
+      return id as string;
     }
 
     getModel() {
@@ -113,8 +116,8 @@ export abstract class Node {
     }
 
     /** @internal */
-    _setUUID(uuid: string) {
-        this._attributes.uuid = uuid;
+    _setSeedId(id: string) {
+        this._attributes.seedId = id;
     }
 
     /** @internal */
