@@ -2,7 +2,8 @@ import { TabSetNode } from "./TabSetNode";
 import { BorderNode } from "./BorderNode";
 import { RowNode } from "./RowNode";
 import { TabNode } from "./TabNode";
-import { randomUUID, createHmac } from "crypto";
+import { SHA256 } from "crypto-js";
+import { v4 as getUUID } from "uuid";
 
 /** @internal */
 export function adjustSelectedIndexAfterFloat(node: TabNode) {
@@ -74,9 +75,9 @@ let id = 0
 /** @internal */
 export function getSeedId() {
     if(window.name != null) {
-        window.name = randomUUID();
+        window.name = getUUID();
     }
-    const newSeedId =  createHmac('sha256', window.name).update(id.toString()).digest('hex');
+    const newSeedId =  SHA256(window.name + id);
     id++;
     return newSeedId;
 }
