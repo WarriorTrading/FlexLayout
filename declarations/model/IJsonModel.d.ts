@@ -80,6 +80,7 @@ export interface IRowAttributes {
 }
 export interface ITabSetAttributes {
     autoSelectTab?: boolean;
+    seedId?: string;
     borderInsets?: IInsets;
     classNameHeader?: string;
     classNameTabStrip?: string;

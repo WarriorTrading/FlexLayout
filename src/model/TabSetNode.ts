@@ -50,6 +50,7 @@ export class TabSetNode extends Node implements IDraggable, IDropTarget {
         const attributeDefinitions = new AttributeDefinitions();
         attributeDefinitions.add("type", TabSetNode.TYPE, true).setType(Attribute.STRING).setFixed();
         attributeDefinitions.add("id", undefined).setType(Attribute.STRING);
+        attributeDefinitions.add("seedId", undefined).setType(Attribute.STRING);
 
         attributeDefinitions.add("weight", 100).setType(Attribute.NUMBER);
         attributeDefinitions.add("width", undefined).setType(Attribute.NUMBER);

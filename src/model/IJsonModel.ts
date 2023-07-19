@@ -84,6 +84,7 @@ export interface IRowAttributes {
 }
 export interface ITabSetAttributes {
 	autoSelectTab?: boolean; // default: true - inherited from global tabSetAutoSelectTab
+	seedId?: string
 	borderInsets?: IInsets; // default: {"top":0,"right":0,"bottom":0,"left":0} - inherited from global tabSetBorderInsets
 	classNameHeader?: string; //  - inherited from global tabSetClassNameHeader
 	classNameTabStrip?: string; //  - inherited from global tabSetClassNameTabStrip
