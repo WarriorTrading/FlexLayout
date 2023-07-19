@@ -6,7 +6,7 @@ import { Rect } from "../Rect";
 import { IDraggable } from "./IDraggable";
 import { IJsonBorderNode, IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "./IJsonModel";
 import { Model, ILayoutMetrics } from "./Model";
-import { getGeneratedSeedId } from "./Utils";
+// import { getGeneratedSeedId } from "./Utils";
 
 export abstract class Node {
     /** @internal */
@@ -59,8 +59,8 @@ export abstract class Node {
           return uuid as string;
       }
 
-      uuid = getGeneratedSeedId();
-      this._setSeedId(uuid);
+      // uuid = getGeneratedSeedId();
+      this._setSeedId("");
 
       return uuid as string;
     }
