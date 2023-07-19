@@ -18,7 +18,7 @@ function getGeneratedSeedId() {
     }
     // const newSeedId =  SHA256(window.name + '--' + id);
     console.log(typeof  window.name, window.name)
-    const newSeedId= window.name + '--' + id;
+    const newSeedId= window.name + '-' + id;
     id++;
     return newSeedId;
 }
@@ -69,14 +69,14 @@ export abstract class Node {
     }
 
     getSeedId() {
-      let uuid = this._attributes.seedId;
-      if (uuid !== undefined) {
-          return uuid as string;
+      let seedId = this._attributes.seedId;
+      if (seedId !== undefined) {
+          return seedId as string;
       }
 
-      uuid = getGeneratedSeedId();
-      this._setSeedId(uuid);
-      return uuid as string;
+      seedId = getGeneratedSeedId();
+      this._setSeedId(seedId);
+      return seedId as string;
     }
 
     getModel() {
@@ -128,8 +128,8 @@ export abstract class Node {
     }
 
     /** @internal */
-    _setSeedId(uuid: string) {
-        this._attributes.uuid = uuid;
+    _setSeedId(seedId: string) {
+        this._attributes.seedId = seedId;
     }
 
     /** @internal */
