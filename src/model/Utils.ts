@@ -2,8 +2,6 @@ import { TabSetNode } from "./TabSetNode";
 import { BorderNode } from "./BorderNode";
 import { RowNode } from "./RowNode";
 import { TabNode } from "./TabNode";
-// import { SHA256 } from "crypto-js";
-// import { v4 as getUUID } from "uuid";
 
 /** @internal */
 export function adjustSelectedIndexAfterFloat(node: TabNode) {
@@ -70,15 +68,3 @@ export function adjustSelectedIndex(parent: TabSetNode | BorderNode | RowNode, r
     }
 }
 
-// let id = 0
-
-/** @internal */
-export function getGeneratedSeedId() {
-    // if(window.name != null) {
-    //     window.name = getUUID();
-    // }
-    // const newSeedId =  SHA256(window.name + id);
-    // id++;
-    // return newSeedId;
-    return ''
-}

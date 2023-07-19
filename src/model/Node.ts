@@ -6,7 +6,20 @@ import { Rect } from "../Rect";
 import { IDraggable } from "./IDraggable";
 import { IJsonBorderNode, IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "./IJsonModel";
 import { Model, ILayoutMetrics } from "./Model";
-// import { getGeneratedSeedId } from "./Utils";
+import { SHA256 } from "crypto-js";
+import { v4 as getUUID } from "uuid";
+
+let id = 0
+
+/** @internal */
+function getGeneratedSeedId() {
+    if(window.name != null) {
+        window.name = getUUID();
+    }
+    const newSeedId =  SHA256(window.name + id);
+    id++;
+    return newSeedId;
+}
 
 export abstract class Node {
     /** @internal */
@@ -59,9 +72,8 @@ export abstract class Node {
           return uuid as string;
       }
 
-      // uuid = getGeneratedSeedId();
-      this._setSeedId("");
-
+      uuid = getGeneratedSeedId();
+      this._setSeedId(uuid);
       return uuid as string;
     }
 
