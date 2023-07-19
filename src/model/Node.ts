@@ -13,7 +13,7 @@ let id = 0
 
 /** @internal */
 function getGeneratedSeedId() {
-    if(window.name != null) {
+    if(window.name == null) {
         window.name = getUUID();
     }
     // const newSeedId =  SHA256(window.name + '--' + id);
