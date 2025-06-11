@@ -1,6 +1,6 @@
 {
     "name": "flexlayout-react",
-    "version": "7.4.0",
+    "version": "7.4.1",
     "description": "A multi-tab docking layout manager",
     "main": "lib/index.js",
     "types": "./declarations/index.d.ts",
@@ -36,8 +36,8 @@
     "repository": "https://github.com/caplin/FlexLayout",
     "license": "ISC",
     "peerDependencies": {
-        "react": "^18.0.0",
-        "react-dom": "^18.0.0"
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -47,8 +47,8 @@
         "@cypress/webpack-dev-server": "^1.8.4",
         "@types/node": "^17.0.24",
         "@types/prismjs": "^1.26.0",
-        "@types/react": "^18.0.5",
-        "@types/react-dom": "^18.0.1",
+        "@types/react": "^19.1.0",
+        "@types/react-dom": "^19.1.0",
         "@types/uuid": "^8.3.3",
         "css-loader": "^6.7.1",
         "cypress": "^9.5.4",
