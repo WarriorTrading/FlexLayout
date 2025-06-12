@@ -589,6 +589,8 @@ yarn install
 Compile the project and run the examples:
  
 ```
+yarn add react
+yarn add react-dom
 yarn start
 ```
 
