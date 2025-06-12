@@ -41,7 +41,7 @@ Features:
 
 ## Installation
 
-FlexLayout is in the npm repository. Simply install React and FlexLayout from npm:
+FlexLayout is in the npm repository. Simply install React(19.1.0) and FlexLayout from npm:
 
 ```
 npm install react
